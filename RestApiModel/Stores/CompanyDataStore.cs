@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RestApiModel.Models;
+using RestApiModel.Model;
 
 namespace RestApiModel.Stores
 {
@@ -11,7 +11,7 @@ namespace RestApiModel.Stores
         public static CompanyDataStore Current { get; } = new CompanyDataStore();
         public List<Company> Company { get; set; }
 
-        public CompanyDataStore()
+        /*public CompanyDataStore()
         {
             Company = new List<Company>()
             {
@@ -37,7 +37,7 @@ namespace RestApiModel.Stores
                 }
 
             };
-        }
+        }*/
 
 
 
