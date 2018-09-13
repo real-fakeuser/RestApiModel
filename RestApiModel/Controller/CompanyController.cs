@@ -58,6 +58,7 @@ namespace RestApiModel.Controllers
             {
                 return StatusCode(StatusCodes.Status204NoContent, null);
             }*/
+            return StatusCode(StatusCodes.Status200OK, Name);
             return StatusCode(StatusCodes.Status204NoContent);
         }
 
