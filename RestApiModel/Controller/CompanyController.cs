@@ -19,14 +19,32 @@ namespace RestApiModel.Controllers
         public IActionResult GetCompany()
         {
             List<Model.Company> dt = getData.Read();
-            return dt != null ? StatusCode(StatusCodes.Status200OK, dt) : StatusCode(StatusCodes.Status204NoContent, null);
+            if (dt != null)
+            {
+                return StatusCode(StatusCodes.Status200OK, dt);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status204NoContent, null);
+            }
         }
+
         [HttpGet("{id}")]
         public IActionResult GetCompany(int Id)
         {
             List<Model.Company> dt = getData.Read(Id);
-            return dt != null ? StatusCode(StatusCodes.Status200OK, dt) : StatusCode(StatusCodes.Status204NoContent, null);
+            if (dt != null)
+            {
+                return StatusCode(StatusCodes.Status200OK, dt);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status204NoContent, null);
+            }
         }
+
+
+
 
     }
 }
