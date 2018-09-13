@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RestApiModel.Models;
+using RestApiModel.Model;
 
 namespace RestApiModel.Stores
 {
