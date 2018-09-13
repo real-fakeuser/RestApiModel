@@ -43,6 +43,24 @@ namespace RestApiModel.Controllers
             }
         }
 
+        [HttpPost()]
+        public IActionResult AddCompany(string Name)
+        {
+
+
+
+            /*List<Model.Company> dt = getData.Read(Id);
+            if (dt != null)
+            {
+                return StatusCode(StatusCodes.Status200OK, dt);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status204NoContent, null);
+            }*/
+            return StatusCode(StatusCodes.Status204NoContent);
+        }
+
 
 
 
