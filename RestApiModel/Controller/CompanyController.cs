@@ -4,23 +4,33 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RestApiModel.Stores;
+using RestApiModel.Repository;
+using Microsoft.AspNetCore.Http;
 
 namespace RestApiModel.Controllers
 {
     [Route("api/company")]
     public class CompanyController : Controller
     {
+        CompanyRepo getData = new CompanyRepo();
+
+
         [HttpGet()]
-        public JsonResult GetCompany()
+        public IActionResult GetCompany()
         {
-            return new JsonResult(tempFillModelsWithDummyData.Current.Company);
+            List<Model.Company> dt = getData.Read();
+            return dt != null ? StatusCode(StatusCodes.Status200OK, dt) : StatusCode(StatusCodes.Status204NoContent, null);
         }
         [HttpGet("{id}")]
-        public JsonResult GetCompany(int id)
+        public IActionResult GetCompany(int Id)
         {
+            List<Model.Company> dt = getData.Read(Id);
+            return dt != null ? StatusCode(StatusCodes.Status200OK, dt) : StatusCode(StatusCodes.Status204NoContent, null);
+
+            /*
             return new JsonResult(
                 CompanyDataStore.Current.Company.FirstOrDefault(c => c.Id == id)
-                );
+                );*/
         }
     }
 }
