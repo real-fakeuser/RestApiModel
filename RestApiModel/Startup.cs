@@ -27,8 +27,13 @@ namespace RestApiModel
 
             app.Run(async (context) =>
             {
-                await context.Response.WriteAsync("Hello World!");
+                throw new Exception("Example exception");
             });
+            /*
+            app.Run(async (context) =>
+            {
+                await context.Response.WriteAsync("Hello World!");
+            });*/
         }
     }
 }
