@@ -26,11 +26,7 @@ namespace RestApiModel.Controllers
         {
             List<Model.Company> dt = getData.Read(Id);
             return dt != null ? StatusCode(StatusCodes.Status200OK, dt) : StatusCode(StatusCodes.Status204NoContent, null);
-
-            /*
-            return new JsonResult(
-                CompanyDataStore.Current.Company.FirstOrDefault(c => c.Id == id)
-                );*/
         }
+
     }
 }
