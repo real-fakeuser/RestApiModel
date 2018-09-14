@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using RestApiModel.Stores;
 using RestApiModel.Repository;
 using Microsoft.AspNetCore.Http;
 using RestApiModel.Model;
@@ -82,7 +81,6 @@ namespace RestApiModel.Controllers
                         return StatusCode(StatusCodes.Status501NotImplemented);
                 }
             }
-            return StatusCode(StatusCodes.Status501NotImplemented);
         }
 
 
