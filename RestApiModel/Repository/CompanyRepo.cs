@@ -8,7 +8,7 @@ using Dapper;
 using RestApiModel.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-
+using RestApiModel.Helper;
 
 
 namespace RestApiModel.Repository
@@ -17,9 +17,10 @@ namespace RestApiModel.Repository
     {
         public SqlConnection DefineSqlConn()
         {
-            SqlConnection conn = new SqlConnection();
-            conn.ConnectionString = Properties.Resources.ConnectionStringTappqa;
-            return conn;
+                SqlConnection conn = new SqlConnection();
+                conn.ConnectionString = Properties.Resources.ConnectionStringTappqa;
+                return conn;
+            
         }
 
 
@@ -48,12 +49,24 @@ namespace RestApiModel.Repository
         }
         public bool CreateCompany(string Name)
         {
-            SqlConnection conn = DefineSqlConn();
-            string query = "spCreateOrUpdateCompany";
-            var param = new DynamicParameters();
-            param.Add("@Name", Name);
-            var result = conn.Execute(query, param, null, null, CommandType.StoredProcedure);
-            return result > 0;
+            try
+            {
+                SqlConnection conn = DefineSqlConn();
+                string query = "spCreateOrUpdateCompany";
+                var param = new DynamicParameters();
+                param.Add("@Name", Name);
+                var result = conn.Execute(query, param, null, null, CommandType.StoredProcedure);
+                return result > 0;
+                
+            }
+            catch(SqlException)
+            {
+                throw new RepoException(EnumResultTypes.SQLERROR);
+            }
+            catch(Exception)
+            {
+                throw new RepoException(EnumResultTypes.ERROR);
+            }
         }
 
         public bool UpdateCompany(Model.Company value)
