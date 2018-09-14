@@ -4,6 +4,7 @@
     SQLERROR,
     NOTFOUND,
     INVALIDARGUMENT,
-    ERROR
+    ERROR,
+    TEST
 }
 
