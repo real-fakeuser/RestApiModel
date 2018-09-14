@@ -7,19 +7,20 @@ using RestApiModel.Stores;
 using RestApiModel.Repository;
 using Microsoft.AspNetCore.Http;
 using RestApiModel.Model;
+using RestApiModel.Helper;
 
 namespace RestApiModel.Controllers
 {
     [Route("api/company")]
     public class CompanyController : Controller
     {
-        CompanyRepo getData = new CompanyRepo();
+        CompanyRepo repo = new CompanyRepo();
 
 
         [HttpGet()]
         public IActionResult GetCompany()
         {
-            List<Model.Company> dt = getData.Read();
+            List<Model.Company> dt = repo.Read();
             if (dt != null)
             {
                 return StatusCode(StatusCodes.Status200OK, dt);
@@ -33,7 +34,11 @@ namespace RestApiModel.Controllers
         [HttpGet("{id}")]
         public IActionResult GetCompany(int Id)
         {
-            List<Model.Company> dt = getData.Read(Id);
+            if (Id == 0)
+            {
+                return StatusCode(StatusCodes.Status406NotAcceptable);
+            }
+            List<Model.Company> dt = repo.Read(Id);
             if (dt != null)
             {
                 return StatusCode(StatusCodes.Status200OK, dt);
@@ -45,28 +50,46 @@ namespace RestApiModel.Controllers
         }
 
         [HttpPost()]
-        public IActionResult AddCompany([FromBody] Model.Company value)
+        public IActionResult Add([FromBody] Model.Company value)
         {
-
             string name = value.Name;
-            bool bsuccess = getData.CreateCompany(name);
-            if (bsuccess)
+            bool bsuccess = false;
+            try
             {
-                return StatusCode(StatusCodes.Status200OK);
+                bsuccess = repo.CreateCompany(name);
+                if (bsuccess)
+                {
+                    return StatusCode(StatusCodes.Status201Created);
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status204NoContent);
+                }
             }
-            else
+            catch (Helper.RepoException ex)
             {
-                return StatusCode(StatusCodes.Status400BadRequest);
+                switch (ex.Type)
+                {
+                    case EnumResultTypes.INVALIDARGUMENT:
+                        return StatusCode(StatusCodes.Status405MethodNotAllowed);
+                    case EnumResultTypes.NOTFOUND:
+                        return StatusCode(StatusCodes.Status204NoContent);
+                    case EnumResultTypes.SQLERROR:
+                        return StatusCode(StatusCodes.Status408RequestTimeout);
+                    case EnumResultTypes.ERROR:
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    default:
+                        return StatusCode(StatusCodes.Status501NotImplemented);
+                }
             }
+            return StatusCode(StatusCodes.Status501NotImplemented);
         }
 
 
         [HttpPatch()]
         public IActionResult Update([FromBody] Model.Company value)
         {
-
-
-            bool bsuccess = getData.UpdateCompany(value);
+            bool bsuccess = repo.UpdateCompany(value);
             if (bsuccess)
             {
                 return StatusCode(StatusCodes.Status200OK);
@@ -81,7 +104,7 @@ namespace RestApiModel.Controllers
         {
 
 
-            bool bsuccess = getData.DeleteCompany(value);
+            bool bsuccess = repo.DeleteCompany(value);
             if (bsuccess)
             {
                 return StatusCode(StatusCodes.Status200OK);
