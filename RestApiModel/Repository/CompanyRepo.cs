@@ -6,6 +6,8 @@ using System.Data.SqlClient;
 using System.Data;
 using Dapper;
 using RestApiModel.Model;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 
 
@@ -44,8 +46,39 @@ namespace RestApiModel.Repository
             var result = conn.Query<Model.Company>(sqlStatement, param).ToList();
             return result;
         }
+        public bool CreateCompany(string Name)
+        {
+            SqlConnection conn = DefineSqlConn();
+            string query = "spCreateOrUpdateCompany";
+            var param = new DynamicParameters();
+            param.Add("@Name", Name);
+            var result = conn.Execute(query, param, null, null, CommandType.StoredProcedure);
+            return result > 0;
+        }
 
+        public bool UpdateCompany(Model.Company value)
+        {
+            SqlConnection conn = DefineSqlConn();
+            string query = "spCreateOrUpdateCompany";
+            var param = new DynamicParameters();
+            param.Add("@Id", value.Id);
+            param.Add("@Name", value.Name);
+            param.Add("@Delete", 0);
+            var result = conn.Execute(query, param, null, null, CommandType.StoredProcedure);
+            return result > 0; 
+        }
 
+        public bool DeleteCompany(Model.Company value)
+        {
+            SqlConnection conn = DefineSqlConn();
+            string query = "spCreateOrUpdateCompany";
+            var param = new DynamicParameters();
+            param.Add("@Id", value.Id);
+            param.Add("@Name", null);
+            param.Add("@Delete", 1);
+            var result = conn.Execute(query, param, null, null, CommandType.StoredProcedure);
+            return result > 0;
+        }
 
     }
 }
