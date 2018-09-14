@@ -21,9 +21,6 @@ namespace RestApiModel.Controllers
         public IActionResult GetCompany()
         {
             List<Model.Company> dt = repo.Read();
-            
-            
-
             if (dt != null)
             {
                 return StatusCode(StatusCodes.Status200OK, dt);
@@ -37,6 +34,10 @@ namespace RestApiModel.Controllers
         [HttpGet("{id}")]
         public IActionResult GetCompany(int Id)
         {
+            if (Id == 0)
+            {
+                return StatusCode(StatusCodes.Status406NotAcceptable);
+            }
             List<Model.Company> dt = repo.Read(Id);
             if (dt != null)
             {
@@ -69,8 +70,6 @@ namespace RestApiModel.Controllers
             {
                 switch (ex.Type)
                 {
-                    case EnumResultTypes.OK:
-                        break;
                     case EnumResultTypes.INVALIDARGUMENT:
                         return StatusCode(StatusCodes.Status405MethodNotAllowed);
                     case EnumResultTypes.NOTFOUND:
