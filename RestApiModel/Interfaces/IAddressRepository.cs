@@ -11,8 +11,7 @@ namespace RestApiModel.Interfaces
     {
         List<Address> Read();
         List<Address> Read(int Id);
-        bool Add(Model.Address value);
-        bool Update(Model.Address value);
+        bool AddOrUpdate(Model.Address value);
         int Delete(int Id);
     }
 
