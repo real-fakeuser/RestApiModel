@@ -17,6 +17,7 @@ namespace RestApiModel.Helper
         {
             _settings = options.Value;
         }
+
         public IDbConnection GetCompany()
         {
             var con = new SqlConnection(_settings.Company);

@@ -9,5 +9,8 @@ namespace RestApiModel.Interfaces
     public interface ICompanyRepository
     {
         List<Company> Read();
+        List<Company> Read(int Id);
+        int Add(string name);
+        int Update(int Id, string name, bool delete);
     }
 }
