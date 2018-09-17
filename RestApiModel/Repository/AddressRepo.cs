@@ -21,136 +21,108 @@ namespace RestApiModel.Repository
         {
             _dbContext = dbContext;
         }
-
-
-
-        public int Update(int Id, string name, bool delete)
-        {
-            try
-            {
-                int retVal;
-                var con = _dbContext.GetAddress();
-                string query = "spCreateOrUpdateAddress";
-                var param = new DynamicParameters();
-                param.Add("@Id", Id);
-                param.Add("@Name", name);
-                param.Add("@Delete", delete);
-                retVal = con.Execute(query, param, null, null, CommandType.StoredProcedure);
-                return retVal;
-            }
-            catch (SqlException)
-            {
-                throw new RepoException(EnumResultTypes.SQLERROR);
-            }
-            catch (Exception)
-            {
-                throw new RepoException(EnumResultTypes.ERROR);
-            }
-        }
-
-        List<Address> IAddressRepository.Read()
-        {
-            try
-            {
-                List<Address> retVal;
-                var con = _dbContext.GetAddress();
-                string AddressSelect = @"SELECT Id, 
+        const string _ReadAll = @"SELECT Id, 
                                                 Street,
                                                 City,
                                                 ZipCode,
                                                 CountryCode
                                        FROM viAddress;";
-                using (con)
-                {
-                    retVal = con.Query<Address>(AddressSelect).ToList();
-                }
-                return retVal;
-            }
-            catch (SqlException)
-            {
-                throw new RepoException(EnumResultTypes.SQLERROR);
-            }
-            catch (Exception)
-            {
-                throw new RepoException(EnumResultTypes.ERROR);
-            }
-            throw new NotImplementedException();
-        }
-
-        List<Address> IAddressRepository.Read(int Id)
-        {
-            try
-            {
-                List<Address> retVal;
-                var con = _dbContext.GetAddress();
-                DynamicParameters param = new DynamicParameters();
-                param.Add("@Id", Id);
-                string AddressSelect = @"SELECT Id, 
+        const string _ReadById = @"SELECT Id, 
                                                 Street,
                                                 City,
                                                 ZipCode,
                                                 CountryCode
                                        FROM viAddress
                                        WHERE   Id = @Id;";
-                using (con)
-                {
-                    retVal = con.Query<Address>(AddressSelect, param).ToList();
-                }
-                return retVal;
-            }
-            catch (SqlException)
+        public List<Address> Read()
+        {
+            return _ReadDataset();
+        }
+        public List<Address> Read(int Id)
+        {
+            return _ReadDataset(_ReadById, Id);
+        }
+        public List<Address> Create(List<Address> NewAddressSet)
+        {
+            if(_WriteOrUpdate("Create", 0, NewAddressSet.Street, NewAddressSet.ZipCode, NewAddressSet.City, NewAddressSet.CountryCode))
             {
-                throw new RepoException(EnumResultTypes.SQLERROR);
+                return _ReadDataset();
             }
-            catch (Exception)
+            else
             {
                 throw new RepoException(EnumResultTypes.ERROR);
             }
-
-            throw new NotImplementedException();
         }
-
-        bool IAddressRepository.AddOrUpdate(Model.Address value)
+        public List<Address> Update(List<Address> NewAddressSet)
         {
-            try
+            if (_WriteOrUpdate("Update", NewAddressSet.Id , NewAddressSet.Street, NewAddressSet.ZipCode, NewAddressSet.City, NewAddressSet.CountryCode))
             {
-                if (value != null)
-                {
-                    bool retVal;
-                    var con = _dbContext.GetAddress();
-                    string query = "spCreateOrUpdateAddress";
-                    var param = new DynamicParameters();
-                    if (value.Id != 0)
-                    {
-                        param.Add("@Id", value.Id);
-                    }
-                    param.Add("@Street", value.Street);
-                    param.Add("@City", value.City);
-                    param.Add("@ZipCode", value.ZipCode);
-                    param.Add("@CountryCode", value.CountryCode);
-                    retVal = Convert.ToBoolean(con.Execute(query, param, null, null, CommandType.StoredProcedure));
-                    return retVal;
-                }
-                else
-                {
-                    throw new RepoException(EnumResultTypes.NOHANDOVERCONTENT);
-                }
+                return _ReadDataset();
             }
-            catch (SqlException)
-            {
-                throw new RepoException(EnumResultTypes.SQLERROR);
-            }
-            catch (Exception)
+            else
             {
                 throw new RepoException(EnumResultTypes.ERROR);
             }
-
-            throw new NotImplementedException();
         }
-        int IAddressRepository.Delete(int Id)
+        public List<Address> Delete(int Id)
         {
+            if (_WriteOrUpdate("Delete", Id))
+            {
+                return _ReadDataset();
+            }
+            else
+            {
+                throw new RepoException(EnumResultTypes.ERROR);
+            }
+        }
+        private List<Address> _ReadDataset(string _query = _ReadAll, int Id = -1)
+        {
+            List<Address> retVal;
+            var con = _dbContext.GetCompany();
+            DynamicParameters param = new DynamicParameters();
+
+
+            if (Id != -1)
+            {
+                param.Add("@Id", Id);
+            }
+            using (con)
+            {
+                retVal = con.Query<Address>(_query, param).ToList();
+            }
+            return retVal;
 
         }
+        private bool _WriteOrUpdate(string mode = "None", int Id = -1, string street = null, string ZipCode = null, string City = null, string CountryCode = null)
+        {
+            string query = "spCreateOrUpdateAddress";
+            var param = new DynamicParameters();
+            switch (mode)
+            {
+                case "Create":
+                    break;
+                case "Update":
+                    param.Add("@Id", Id);
+                    break;
+                case "Delete":
+                    param.Add("@Id", Id);
+                    param.Add("@Delete", true);
+                    break;
+                case "None":
+                    throw new RepoException(EnumResultTypes.ERROR);
+                default:
+                    throw new RepoException(EnumResultTypes.ERROR);
+            }
+            param.Add("@Street", street);
+            param.Add("@ZipCode", ZipCode);
+            param.Add("@City", City);
+            param.Add("@CountryCode", CountryCode);
+            var con = _dbContext.GetCompany();
+            int retVal;
+            retVal = con.Execute(query, param, null, null, CommandType.StoredProcedure);
+            return retVal > 0;
+        }
+
     }
 }
 
