@@ -16,7 +16,7 @@ namespace RestApiModel.Controllers
         CompanyRepo repo = new CompanyRepo();
 
 
-        [HttpGet()]
+        [HttpGet()]                                                             //Read
         public IActionResult GetCompany()
         {
             List<Model.Company> dt = repo.Read();
@@ -30,7 +30,7 @@ namespace RestApiModel.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}")]                                                       //Read
         public IActionResult GetCompany(int Id)
         {
             if (Id == 0)
@@ -48,7 +48,7 @@ namespace RestApiModel.Controllers
             }
         }
 
-        [HttpPost()]
+        [HttpPost()]                                                            //Create
         public IActionResult Add([FromBody] Model.Company value)
         {
             string name = value.Name;
@@ -84,7 +84,7 @@ namespace RestApiModel.Controllers
         }
 
 
-        [HttpPatch()]
+        [HttpPatch()]                                                       //Update
         public IActionResult Update([FromBody] Model.Company value)
         {
             bool bsuccess = repo.UpdateCompany(value);
@@ -97,7 +97,7 @@ namespace RestApiModel.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest);
             }
         }
-        [HttpDelete()]
+        [HttpDelete()]                                                       //Delete
         public IActionResult Delete([FromBody] Model.Company value)
         {
 
