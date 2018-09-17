@@ -110,16 +110,34 @@ namespace RestApiModel.Controllers
             {
                 return StatusCode(StatusCodes.Status405MethodNotAllowed);
             }
-        
-            /*bool bsuccess = repo.UpdateCompany(value);
-            if (bsuccess)
+        }
+
+
+        [HttpDelete()]                                                       //Update
+        public IActionResult Delete([FromBody] Model.Company value)
+        {
+            int Id = value.Id;
+            string name = value.Name;
+            if (Id != 0 && name != null)
             {
-                return StatusCode(StatusCodes.Status200OK);
+                int Company = _companyRepo.Update(Id, name, false);
+                if (Company < 1)
+                {
+                    return StatusCode(StatusCodes.Status206PartialContent);
+                }
+                else if (Company == 1)
+                {
+                    return StatusCode(StatusCodes.Status201Created, Company);
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status501NotImplemented);
+                }
             }
             else
             {
-                return StatusCode(StatusCodes.Status400BadRequest);
-            }*/
+                return StatusCode(StatusCodes.Status405MethodNotAllowed);
+            }
         }
 
         /*
