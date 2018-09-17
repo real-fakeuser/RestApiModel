@@ -63,7 +63,6 @@ namespace RestApiModel.Controllers
             try
             {
                 var Company = _companyRepo.Read(Id);
-                //Console.WriteLine("##Debugging value returned list length: " + Convert.ToString(Company.Count));
                 if (Company.Count == 1)
                 {
                     return StatusCode(StatusCodes.Status302Found, Company);
@@ -81,12 +80,29 @@ namespace RestApiModel.Controllers
                     return StatusCode(StatusCodes.Status400BadRequest);
                 }
             }
+            catch (Helper.RepoException ex)
+            {
+                switch (ex.Type)
+                {
+                    case EnumResultTypes.INVALIDARGUMENT:
+                        return StatusCode(StatusCodes.Status400BadRequest);
+                    case EnumResultTypes.NOTFOUND:
+                        return StatusCode(StatusCodes.Status204NoContent);
+                    case EnumResultTypes.SQLERROR:
+                        return StatusCode(StatusCodes.Status408RequestTimeout);
+                    case EnumResultTypes.ERROR:
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    default:
+                        return StatusCode(StatusCodes.Status501NotImplemented);
+                }
+            }
             catch (NullReferenceException)
             {
                 return StatusCode(StatusCodes.Status400BadRequest);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrHandler.Go(ex,null,null);
                 return StatusCode(StatusCodes.Status501NotImplemented);
             }
         }
@@ -116,12 +132,29 @@ namespace RestApiModel.Controllers
                     return StatusCode(StatusCodes.Status417ExpectationFailed);
                 }
             }
+            catch (Helper.RepoException ex)
+            {
+                switch (ex.Type)
+                {
+                    case EnumResultTypes.INVALIDARGUMENT:
+                        return StatusCode(StatusCodes.Status400BadRequest);
+                    case EnumResultTypes.NOTFOUND:
+                        return StatusCode(StatusCodes.Status204NoContent);
+                    case EnumResultTypes.SQLERROR:
+                        return StatusCode(StatusCodes.Status408RequestTimeout);
+                    case EnumResultTypes.ERROR:
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    default:
+                        return StatusCode(StatusCodes.Status501NotImplemented);
+                }
+            }
             catch (NullReferenceException)
             {
                 return StatusCode(StatusCodes.Status400BadRequest);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrHandler.Go(ex, null, null);
                 return StatusCode(StatusCodes.Status501NotImplemented);
             }
         }
@@ -155,12 +188,29 @@ namespace RestApiModel.Controllers
                     return StatusCode(StatusCodes.Status405MethodNotAllowed);
                 }
             }
+            catch (Helper.RepoException ex)
+            {
+                switch (ex.Type)
+                {
+                    case EnumResultTypes.INVALIDARGUMENT:
+                        return StatusCode(StatusCodes.Status400BadRequest);
+                    case EnumResultTypes.NOTFOUND:
+                        return StatusCode(StatusCodes.Status204NoContent);
+                    case EnumResultTypes.SQLERROR:
+                        return StatusCode(StatusCodes.Status408RequestTimeout);
+                    case EnumResultTypes.ERROR:
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    default:
+                        return StatusCode(StatusCodes.Status501NotImplemented);
+                }
+            }
             catch (NullReferenceException)
             {
                 return StatusCode(StatusCodes.Status400BadRequest);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrHandler.Go(ex, null, null);
                 return StatusCode(StatusCodes.Status501NotImplemented);
             }
             
@@ -194,12 +244,29 @@ namespace RestApiModel.Controllers
                     return StatusCode(StatusCodes.Status405MethodNotAllowed);
                 }
             }
+            catch (Helper.RepoException ex)
+            {
+                switch (ex.Type)
+                {
+                    case EnumResultTypes.INVALIDARGUMENT:
+                        return StatusCode(StatusCodes.Status400BadRequest);
+                    case EnumResultTypes.NOTFOUND:
+                        return StatusCode(StatusCodes.Status204NoContent);
+                    case EnumResultTypes.SQLERROR:
+                        return StatusCode(StatusCodes.Status408RequestTimeout);
+                    case EnumResultTypes.ERROR:
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    default:
+                        return StatusCode(StatusCodes.Status501NotImplemented);
+                }
+            }
             catch (NullReferenceException)
             {
                 return StatusCode(StatusCodes.Status400BadRequest);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ErrHandler.Go(ex, null, null);
                 return StatusCode(StatusCodes.Status501NotImplemented);
             }
         }
