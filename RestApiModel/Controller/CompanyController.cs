@@ -26,15 +26,35 @@ namespace RestApiModel.Controllers
         [HttpGet()]                                                             //Read
         public IActionResult GetCompany()
         {
-            var names = _companyRepo.Read();
-            if (names.Count > 0)
+            try
             {
-                return StatusCode(StatusCodes.Status200OK, names);
+                var names = _companyRepo.Read();
+                if (names.Count > 0)
+                {
+                    return StatusCode(StatusCodes.Status200OK, names);
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status204NoContent);
+                }
             }
-            else
+            catch (Helper.RepoException ex)
             {
-                return StatusCode(StatusCodes.Status204NoContent);
+                switch (ex.Type)
+                {
+                    case EnumResultTypes.INVALIDARGUMENT:
+                        return StatusCode(StatusCodes.Status400BadRequest);
+                    case EnumResultTypes.NOTFOUND:
+                        return StatusCode(StatusCodes.Status204NoContent);
+                    case EnumResultTypes.SQLERROR:
+                        return StatusCode(StatusCodes.Status408RequestTimeout);
+                    case EnumResultTypes.ERROR:
+                        return StatusCode(StatusCodes.Status500InternalServerError);
+                    default:
+                        return StatusCode(StatusCodes.Status501NotImplemented);
+                }
             }
+
         }
 
         [HttpGet("{id}")]                                                       //Read
@@ -117,17 +137,16 @@ namespace RestApiModel.Controllers
         public IActionResult Delete([FromBody] Model.Company value)
         {
             int Id = value.Id;
-            string name = value.Name;
-            if (Id != 0 && name != null)
+            if (Id != 0)
             {
-                int Company = _companyRepo.Update(Id, name, false);
+                int Company = _companyRepo.Update(Id, null, true);
                 if (Company < 1)
                 {
                     return StatusCode(StatusCodes.Status206PartialContent);
                 }
                 else if (Company == 1)
                 {
-                    return StatusCode(StatusCodes.Status201Created, Company);
+                    return StatusCode(StatusCodes.Status200OK, Company);
                 }
                 else
                 {
