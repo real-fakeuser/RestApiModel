@@ -24,5 +24,11 @@ namespace RestApiModel.Helper
             con.Open();
             return con;
         }
+        public IDbConnection GetAddress()
+        {
+            var con = new SqlConnection(_settings.Address);
+            con.Open();
+            return con;
+        }
     }
 }

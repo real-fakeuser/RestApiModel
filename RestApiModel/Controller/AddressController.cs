@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +11,7 @@ using RestApiModel.Model;
 using RestApiModel.Helper;
 using RestApiModel.Interfaces;
 
-namespace RestApiModel.Controller
+namespace RestApiModel.AddressController
 {
     [Produces("application/json")]
     [Route("api/company")]
@@ -102,7 +104,7 @@ namespace RestApiModel.Controller
             }
             catch (Exception ex)
             {
-                ErrHandler.Go(ex,null,null);
+                ErrHandler.Go(ex, null, null);
                 return StatusCode(StatusCodes.Status501NotImplemented);
             }
         }
@@ -213,7 +215,7 @@ namespace RestApiModel.Controller
                 ErrHandler.Go(ex, null, null);
                 return StatusCode(StatusCodes.Status501NotImplemented);
             }
-            
+
         }
 
 

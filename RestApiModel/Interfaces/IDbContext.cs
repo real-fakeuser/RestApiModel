@@ -10,5 +10,6 @@ namespace RestApiModel.Interfaces
     public interface IDbContext
     {
         IDbConnection GetCompany();
+        IDbConnection GetAddress();
     }
 }
