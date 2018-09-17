@@ -9,32 +9,36 @@ using RestApiModel.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using RestApiModel.Helper;
-
+using RestApiModel.Interfaces;
 
 namespace RestApiModel.Repository
 {
-    public class CompanyRepo
+    public class CompanyRepo : ICompanyRepository
     {
-        public SqlConnection DefineSqlConn()
+        IDbContext _dbContext;
+        public CompanyRepo(IDbContext dbContext)
         {
-                SqlConnection conn = new SqlConnection();
-                conn.ConnectionString = Properties.Resources.ConnectionStringTappqa;
-                return conn;
-            
+            _dbContext = dbContext;
         }
 
 
 
-        public List<Model.Company> Read()
+        public List<Company> Read()
         {
-            SqlConnection conn = DefineSqlConn();
-            string sqlStatement = @"SELECT Id,
-                                            Company AS Name
-                                    FROM viCompany;";
-            var result = conn.Query<Model.Company>(sqlStatement).ToList();
-            return result;
+            List<Company> retVal;
+            var con = _dbContext.GetCompany();
+            string companySelect = "SELECT  Id, " +
+                "                           Company AS Name " +
+                "                   FROM viCompany;";
+            using (con)
+            {
+                retVal = con.Query<Company>(companySelect).ToList();
+            }
+
+            return retVal;
         }
-        public List<Model.Company> Read(int Id)
+        /*
+        public List<Model.Company> Read2(int Id)
         {
 
             DynamicParameters param = new DynamicParameters();
@@ -92,7 +96,7 @@ namespace RestApiModel.Repository
             var result = conn.Execute(query, param, null, null, CommandType.StoredProcedure);
             return result > 0;
         }
-
+        */
     }
 }
 

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RestApiModel.Model.dto
+namespace RestApiModel.Model
 {
-    public class CompanyDto
+    public class DbSettings
     {
+        public string Company { get; set; }
     }
 }
