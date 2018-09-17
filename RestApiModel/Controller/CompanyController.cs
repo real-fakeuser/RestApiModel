@@ -24,7 +24,7 @@ namespace RestApiModel.Controllers
 
         //CompanyRepo repo = new CompanyRepo();
         [HttpGet()]                                                             //Read
-        public IActionResult Read()
+        public IActionResult GetCompany()
         {
             var names = _companyRepo.Read();
             if (names.Count > 0)
