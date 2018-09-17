@@ -12,8 +12,9 @@ namespace RestApiModel.Helper
         {
             try
             {
-                Console.WriteLine("###############################################################################");
-                Console.WriteLine("An unexpected error occured! ExceptionDescription: " + ex);
+                Console.WriteLine("########################################################################################################################################");
+                Console.WriteLine("An unexpected error occured! ExceptionDescription: ");
+                Console.WriteLine(ex);
                 if (ErrDescription != null)
                 {
                     Console.WriteLine("ErrorDescription: " + ErrDescription);
@@ -22,16 +23,11 @@ namespace RestApiModel.Helper
                 {
                     Console.WriteLine("Location in code: " + location);
                 }
-                Console.WriteLine("###############################################################################");
+                Console.WriteLine("########################################################################################################################################");
             }
             catch (Exception)
             {
             }
         }
-
-        /*internal static void Go()
-        {
-            throw new NotImplementedException();
-        }*/
     }
 }
