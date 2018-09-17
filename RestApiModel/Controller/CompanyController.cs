@@ -60,23 +60,34 @@ namespace RestApiModel.Controllers
         [HttpGet("{id}")]                                                       //Read
         public IActionResult GetCompany(int Id)
         {
-            var Company = _companyRepo.Read(Id);
-            //Console.WriteLine("##Debugging value returned list length: " + Convert.ToString(Company.Count));
-            if (Company.Count == 1)
+            try
             {
-                return StatusCode(StatusCodes.Status302Found, Company);
+                var Company = _companyRepo.Read(Id);
+                //Console.WriteLine("##Debugging value returned list length: " + Convert.ToString(Company.Count));
+                if (Company.Count == 1)
+                {
+                    return StatusCode(StatusCodes.Status302Found, Company);
+                }
+                else if (Company.Count < 1)
+                {
+                    return StatusCode(StatusCodes.Status204NoContent);
+                }
+                else if (Company.Count > 1)
+                {
+                    return StatusCode(StatusCodes.Status207MultiStatus);
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest);
+                }
             }
-            else if (Company.Count < 1)
-            {
-                return StatusCode(StatusCodes.Status204NoContent);
-            }
-            else if (Company.Count > 1)
-            {
-                return StatusCode(StatusCodes.Status207MultiStatus);
-            }
-            else
+            catch (NullReferenceException)
             {
                 return StatusCode(StatusCodes.Status400BadRequest);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status501NotImplemented);
             }
         }
 
@@ -84,35 +95,14 @@ namespace RestApiModel.Controllers
         [HttpPost()]                                                            //Create
         public IActionResult Add([FromBody] Company value)
         {
-            string name = value.Name;
-            if (name.Length < 1)
+            try
             {
-                return StatusCode(StatusCodes.Status204NoContent);
-            }
-            int Company = _companyRepo.Add(name);
-            if (Company < 1)
-            {
-                return StatusCode(StatusCodes.Status206PartialContent);
-            }
-            else if (Company == 1)
-            {
-                return StatusCode(StatusCodes.Status201Created, Company);
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status417ExpectationFailed);
-            }
-        }
-
-
-        [HttpPut()]                                                       //Update
-        public IActionResult Update([FromBody] Model.Company value)
-        {
-            int Id = value.Id;
-            string name = value.Name;
-            if (Id != 0 && name != null)
-            {
-                int Company = _companyRepo.Update(Id, name, false);
+                string name = value.Name;
+                if (name.Length < 1)
+                {
+                    return StatusCode(StatusCodes.Status204NoContent);
+                }
+                int Company = _companyRepo.Add(name);
                 if (Company < 1)
                 {
                     return StatusCode(StatusCodes.Status206PartialContent);
@@ -123,39 +113,94 @@ namespace RestApiModel.Controllers
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status501NotImplemented);
+                    return StatusCode(StatusCodes.Status417ExpectationFailed);
                 }
             }
-            else
+            catch (NullReferenceException)
             {
-                return StatusCode(StatusCodes.Status405MethodNotAllowed);
+                return StatusCode(StatusCodes.Status400BadRequest);
             }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status501NotImplemented);
+            }
+        }
+
+
+        [HttpPut()]                                                       //Update
+        public IActionResult Update([FromBody] Model.Company value)
+        {
+            try
+            {
+                int Id = value.Id;
+                string name = value.Name;
+                if (Id != 0 && name != null)
+                {
+                    int Company = _companyRepo.Update(Id, name, false);
+                    if (Company < 1)
+                    {
+                        return StatusCode(StatusCodes.Status206PartialContent);
+                    }
+                    else if (Company == 1)
+                    {
+                        return StatusCode(StatusCodes.Status201Created, Company);
+                    }
+                    else
+                    {
+                        return StatusCode(StatusCodes.Status501NotImplemented);
+                    }
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status405MethodNotAllowed);
+                }
+            }
+            catch (NullReferenceException)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status501NotImplemented);
+            }
+            
         }
 
 
         [HttpDelete()]                                                       //Update
         public IActionResult Delete([FromBody] Model.Company value)
         {
-            int Id = value.Id;
-            if (Id != 0)
+            try
             {
-                int Company = _companyRepo.Update(Id, null, true);
-                if (Company < 1)
+                int Id = value.Id;
+                if (Id != 0)
                 {
-                    return StatusCode(StatusCodes.Status206PartialContent);
-                }
-                else if (Company == 1)
-                {
-                    return StatusCode(StatusCodes.Status200OK, Company);
+                    int Company = _companyRepo.Update(Id, null, true);
+                    if (Company < 1)
+                    {
+                        return StatusCode(StatusCodes.Status206PartialContent);
+                    }
+                    else if (Company == 1)
+                    {
+                        return StatusCode(StatusCodes.Status200OK, Company);
+                    }
+                    else
+                    {
+                        return StatusCode(StatusCodes.Status501NotImplemented);
+                    }
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status501NotImplemented);
+                    return StatusCode(StatusCodes.Status405MethodNotAllowed);
                 }
             }
-            else
+            catch (NullReferenceException)
             {
-                return StatusCode(StatusCodes.Status405MethodNotAllowed);
+                return StatusCode(StatusCodes.Status400BadRequest);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status501NotImplemented);
             }
         }
     }
