@@ -32,6 +32,7 @@ namespace RestApiModel
 
             services.AddSingleton<IDbContext, Helper.DbContext>();
             services.AddScoped<ICompanyRepository, CompanyRepo>();
+            services.AddScoped<IAddressRepository, AddressRepo>();
 
         }
 
