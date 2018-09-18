@@ -16,10 +16,12 @@ namespace RestApiModel.Controller
     public class CompanyController : Microsoft.AspNetCore.Mvc.Controller
     {        // GET api/values
         private readonly ICompanyRepository _companyRepo;
+        private readonly Authorization _authorization;
 
         public CompanyController(ICompanyRepository companyRepo)
         {
             _companyRepo = companyRepo;
+            _authorization = new Authorization();
         }
 
 
@@ -28,6 +30,11 @@ namespace RestApiModel.Controller
         {
             try
             {
+                if (!_authorization.Check(Request.Headers["Authorization"]))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized);
+                }
+
                 var names = _companyRepo.Read();
                 if (names.Count > 0)
                 {
@@ -38,7 +45,7 @@ namespace RestApiModel.Controller
                     return StatusCode(StatusCodes.Status204NoContent);
                 }
             }
-            catch (Helper.RepoException ex)
+            catch (RepoException ex)
             {
                 switch (ex.Type)
                 {
@@ -62,6 +69,10 @@ namespace RestApiModel.Controller
         {
             try
             {
+                if (!_authorization.Check(Request.Headers["Authorization"]))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized);
+                }
                 var Company = _companyRepo.Read(Id);
                 if (Company.Count == 1)
                 {
@@ -113,6 +124,10 @@ namespace RestApiModel.Controller
         {
             try
             {
+                if (!_authorization.Check(Request.Headers["Authorization"]))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized);
+                }
                 string name = value.Name;
                 if (name.Length < 1)
                 {
@@ -165,6 +180,10 @@ namespace RestApiModel.Controller
         {
             try
             {
+                if (!_authorization.Check(Request.Headers["Authorization"]))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized);
+                }
                 int Id = value.Id;
                 string name = value.Name;
                 if (Id != 0 && name != null)
@@ -222,6 +241,10 @@ namespace RestApiModel.Controller
         {
             try
             {
+                if (!_authorization.Check(Request.Headers["Authorization"]))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized);
+                }
                 int Id = value.Id;
                 if (Id != 0)
                 {
