@@ -9,26 +9,26 @@ using RestApiModel.Model;
 using RestApiModel.Helper;
 using RestApiModel.Interfaces;
 
-namespace RestApiModel.Controller
+namespace RestApiModel.AddressController
 {
     [Produces("application/json")]
-    [Route("api/company")]
-    public class CompanyController : Microsoft.AspNetCore.Mvc.Controller
+    [Route("api/address")]
+    public class AddressController : Microsoft.AspNetCore.Mvc.Controller
     {        // GET api/values
-        private readonly ICompanyRepository _companyRepo;
+        private readonly IAddressRepository _AddressRepo;
 
-        public CompanyController(ICompanyRepository companyRepo)
+        public AddressController(IAddressRepository AddressRepo)
         {
-            _companyRepo = companyRepo;
+            _AddressRepo = AddressRepo;
         }
 
 
         [HttpGet()]                                                             //Read
-        public IActionResult GetCompany()
+        public IActionResult GetAddress()
         {
             try
             {
-                var names = _companyRepo.Read();
+                var names = _AddressRepo.Read();
                 if (names.Count > 0)
                 {
                     return StatusCode(StatusCodes.Status200OK, names);
@@ -58,20 +58,20 @@ namespace RestApiModel.Controller
 
 
         [HttpGet("{id}")]                                                       //Read
-        public IActionResult GetCompany(int Id)
+        public IActionResult GetAddress(int Id)
         {
             try
             {
-                var Company = _companyRepo.Read(Id);
-                if (Company.Count == 1)
+                var Address = _AddressRepo.Read(Id);
+                if (Address.Count == 1)
                 {
-                    return StatusCode(StatusCodes.Status302Found, Company);
+                    return StatusCode(StatusCodes.Status302Found, Address);
                 }
-                else if (Company.Count < 1)
+                else if (Address.Count < 1)
                 {
                     return StatusCode(StatusCodes.Status204NoContent);
                 }
-                else if (Company.Count > 1)
+                else if (Address.Count > 1)
                 {
                     return StatusCode(StatusCodes.Status207MultiStatus);
                 }
@@ -102,34 +102,33 @@ namespace RestApiModel.Controller
             }
             catch (Exception ex)
             {
-                ErrHandler.Go(ex,null,null);
+                ErrHandler.Go(ex, null, null);
                 return StatusCode(StatusCodes.Status501NotImplemented);
             }
         }
 
 
         [HttpPost()]                                                            //Create
-        public IActionResult Add([FromBody] Company value)
+        public IActionResult Add([FromBody] Address value)
         {
             try
             {
-                string name = value.Name;
-                if (name.Length < 1)
+                if (value.Id != 0)
                 {
-                    return StatusCode(StatusCodes.Status204NoContent);
+                    return StatusCode(StatusCodes.Status406NotAcceptable);
                 }
-                int Company = _companyRepo.Add(name);
-                if (Company < 1)
+                List<Address> AddressList = _AddressRepo.Create(value);
+                if (AddressList == null)
                 {
                     return StatusCode(StatusCodes.Status206PartialContent);
                 }
-                else if (Company == 1)
+                else if (AddressList != null)
                 {
-                    return StatusCode(StatusCodes.Status201Created, Company);
+                    return StatusCode(StatusCodes.Status201Created, AddressList);
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status417ExpectationFailed);
+                    return StatusCode(StatusCodes.Status500InternalServerError);
                 }
             }
             catch (Helper.RepoException ex)
@@ -161,31 +160,22 @@ namespace RestApiModel.Controller
 
 
         [HttpPut()]                                                       //Update
-        public IActionResult Update([FromBody] Model.Company value)
+        public IActionResult Update([FromBody] Model.Address value)
         {
             try
             {
-                int Id = value.Id;
-                string name = value.Name;
-                if (Id != 0 && name != null)
+                List<Address> Address = _AddressRepo.Update(value);
+                if (Address == null)
                 {
-                    int Company = _companyRepo.Update(Id, name, false);
-                    if (Company < 1)
-                    {
-                        return StatusCode(StatusCodes.Status206PartialContent);
-                    }
-                    else if (Company == 1)
-                    {
-                        return StatusCode(StatusCodes.Status201Created, Company);
-                    }
-                    else
-                    {
-                        return StatusCode(StatusCodes.Status501NotImplemented);
-                    }
+                    return StatusCode(StatusCodes.Status206PartialContent);
+                }
+                else if (Address != null)
+                {
+                    return StatusCode(StatusCodes.Status201Created, Address);
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status405MethodNotAllowed);
+                    return StatusCode(StatusCodes.Status500InternalServerError);
                 }
             }
             catch (Helper.RepoException ex)
@@ -213,26 +203,26 @@ namespace RestApiModel.Controller
                 ErrHandler.Go(ex, null, null);
                 return StatusCode(StatusCodes.Status501NotImplemented);
             }
-            
+
         }
 
 
         [HttpDelete()]                                                       //Update
-        public IActionResult Delete([FromBody] Model.Company value)
+        public IActionResult Delete([FromBody] Model.Address value)
         {
             try
             {
                 int Id = value.Id;
                 if (Id != 0)
                 {
-                    int Company = _companyRepo.Update(Id, null, true);
-                    if (Company < 1)
+                    int Address = _AddressRepo.Delete(Id);
+                    if (Address < 1)
                     {
                         return StatusCode(StatusCodes.Status206PartialContent);
                     }
-                    else if (Company == 1)
+                    else if (Address == 1)
                     {
-                        return StatusCode(StatusCodes.Status200OK, Company);
+                        return StatusCode(StatusCodes.Status200OK, Address);
                     }
                     else
                     {
@@ -241,7 +231,7 @@ namespace RestApiModel.Controller
                 }
                 else
                 {
-                    return StatusCode(StatusCodes.Status405MethodNotAllowed);
+                    return StatusCode(StatusCodes.Status406NotAcceptable);
                 }
             }
             catch (Helper.RepoException ex)
