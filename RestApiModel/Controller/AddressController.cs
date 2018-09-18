@@ -113,18 +113,18 @@ namespace RestApiModel.AddressController
         {
             try
             {
-                if (value.Id == 0)
+                if (value.Id != 0)
                 {
                     return StatusCode(StatusCodes.Status406NotAcceptable);
                 }
-                bool Address = _AddressRepo.AddOrUpdate(value);
-                if (!Address)
+                List<Address> AddressList = _AddressRepo.Create(value);
+                if (AddressList == null)
                 {
                     return StatusCode(StatusCodes.Status206PartialContent);
                 }
-                else if (Address)
+                else if (AddressList != null)
                 {
-                    return StatusCode(StatusCodes.Status201Created, Address);
+                    return StatusCode(StatusCodes.Status201Created, AddressList);
                 }
                 else
                 {
@@ -164,12 +164,12 @@ namespace RestApiModel.AddressController
         {
             try
             {
-                bool Address = _AddressRepo.AddOrUpdate(value);
-                if (!Address)
+                List<Address> Address = _AddressRepo.Update(value);
+                if (Address == null)
                 {
                     return StatusCode(StatusCodes.Status206PartialContent);
                 }
-                else if (Address)
+                else if (Address != null)
                 {
                     return StatusCode(StatusCodes.Status201Created, Address);
                 }

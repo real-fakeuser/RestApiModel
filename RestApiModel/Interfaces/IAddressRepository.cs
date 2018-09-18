@@ -11,9 +11,9 @@ namespace RestApiModel.Interfaces
     {
         List<Address> Read();
         List<Address> Read(int Id);
-        List<Address> Add(List<Address> NewAddressSet);
-        List<Address> Update(List<Address> NewAddressSet);
-        List<Address> Delete(int Id);
+        List<Address> Create(Address NewAddressSet);
+        List<Address> Update(Address NewAddressSet);
+        int Delete(int Id);
     }
 
 }

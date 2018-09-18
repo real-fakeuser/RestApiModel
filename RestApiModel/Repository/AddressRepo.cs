@@ -42,9 +42,10 @@ namespace RestApiModel.Repository
         {
             return _ReadDataset(_ReadById, Id);
         }
-        public List<Address> Create(List<Address> NewAddressSet)
+        public List<Address> Create(Address NewAddressSet)
         {
-            if(_WriteOrUpdate("Create", 0, NewAddressSet.Street, NewAddressSet.ZipCode, NewAddressSet.City, NewAddressSet.CountryCode))
+            
+            if(_WriteOrUpdate("Create", 0, NewAddressSet.Street, NewAddressSet.ZipCode, NewAddressSet.City, NewAddressSet.CountryCode) > 0)
             {
                 return _ReadDataset();
             }
@@ -53,9 +54,9 @@ namespace RestApiModel.Repository
                 throw new RepoException(EnumResultTypes.ERROR);
             }
         }
-        public List<Address> Update(List<Address> NewAddressSet)
+        public List<Address> Update(Address NewAddressSet)
         {
-            if (_WriteOrUpdate("Update", NewAddressSet.Id , NewAddressSet.Street, NewAddressSet.ZipCode, NewAddressSet.City, NewAddressSet.CountryCode))
+            if (_WriteOrUpdate("Update", NewAddressSet.Id , NewAddressSet.Street, NewAddressSet.ZipCode, NewAddressSet.City, NewAddressSet.CountryCode) > 0)
             {
                 return _ReadDataset();
             }
@@ -64,16 +65,9 @@ namespace RestApiModel.Repository
                 throw new RepoException(EnumResultTypes.ERROR);
             }
         }
-        public List<Address> Delete(int Id)
+        public int Delete(int Id)
         {
-            if (_WriteOrUpdate("Delete", Id))
-            {
-                return _ReadDataset();
-            }
-            else
-            {
-                throw new RepoException(EnumResultTypes.ERROR);
-            }
+            return _WriteOrUpdate("Delete", Id);
         }
         private List<Address> _ReadDataset(string _query = _ReadAll, int Id = -1)
         {
@@ -93,7 +87,7 @@ namespace RestApiModel.Repository
             return retVal;
 
         }
-        private bool _WriteOrUpdate(string mode = "None", int Id = -1, string street = null, string ZipCode = null, string City = null, string CountryCode = null)
+        private int _WriteOrUpdate(string mode = "None", int Id = -1, string street = null, string ZipCode = null, string City = null, string CountryCode = null)
         {
             string query = "spCreateOrUpdateAddress";
             var param = new DynamicParameters();
@@ -102,10 +96,10 @@ namespace RestApiModel.Repository
                 case "Create":
                     break;
                 case "Update":
-                    param.Add("@Id", Id);
+                    param.Add("@AddressId", Id);
                     break;
                 case "Delete":
-                    param.Add("@Id", Id);
+                    param.Add("@AddressId", Id);
                     param.Add("@Delete", true);
                     break;
                 case "None":
@@ -120,9 +114,8 @@ namespace RestApiModel.Repository
             var con = _dbContext.GetCompany();
             int retVal;
             retVal = con.Execute(query, param, null, null, CommandType.StoredProcedure);
-            return retVal > 0;
+            return retVal;
         }
-
     }
 }
 
