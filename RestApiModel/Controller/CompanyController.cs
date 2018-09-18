@@ -16,17 +16,19 @@ namespace RestApiModel.Controller
     public class CompanyController : Microsoft.AspNetCore.Mvc.Controller
     {        // GET api/values
         private readonly ICompanyRepository _companyRepo;
+        private readonly Authorization _authorization;
 
         public CompanyController(ICompanyRepository companyRepo)
         {
             _companyRepo = companyRepo;
+            _authorization = new Authorization();
         }
 
 
         [HttpGet()]                                                             //Read
         public IActionResult GetCompany()
         {
-            Console.WriteLine(Request.Headers["Authorization"]);
+            _authorization.check(Request.Headers["Authorization"]);
             try
             {
                 var names = _companyRepo.Read();
@@ -39,7 +41,7 @@ namespace RestApiModel.Controller
                     return StatusCode(StatusCodes.Status204NoContent);
                 }
             }
-            catch (Helper.RepoException ex)
+            catch (RepoException ex)
             {
                 switch (ex.Type)
                 {
