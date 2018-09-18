@@ -120,4 +120,7 @@
   <data name="ConnectionStringTappqa" xml:space="preserve">
     <value>Data Source=TAPPQA;Initial Catalog=Training-TN-CompanyStructure;Integrated Security=True</value>
   </data>
+  <data name="Tim" xml:space="preserve">
+    <value>C1ED8AA69E43CA9175EE1C1079B326787710A7323C4183DE39C9DDC7D600095D</value>
+  </data>
 </root>
