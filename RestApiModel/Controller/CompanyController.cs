@@ -26,6 +26,7 @@ namespace RestApiModel.Controller
         [HttpGet()]                                                             //Read
         public IActionResult GetCompany()
         {
+            Console.WriteLine(Request.Headers["Authorization"]);
             try
             {
                 var names = _companyRepo.Read();
