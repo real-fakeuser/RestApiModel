@@ -9,24 +9,45 @@ namespace RestApiModel.Helper
 {
     public class Authorization
     {
-        public bool check(string _AuthRaw)
+        public bool Check(string HeaderAuthString)
         {
-
-            string AuthString = _ConvertBaseToString(_GetStringFromBase(_AuthRaw));
-            string[] UserData = new string[2];
+            string AuthString = _ConvertBaseToString(_GetStringFromBase(HeaderAuthString));
+            string[] UserData = new string[2];          //Separating username and password string
             int i = 0;
             foreach (var part in AuthString.Split(":"))
             {
                 UserData[i] = part;
                 i++;
             }
-            Console.WriteLine(UserData[0]);
-            Console.WriteLine(_ComputeSha256Hash(UserData[1]));
-
-
-            return false;
+            //Console.WriteLine(_ComputeSha256Hash(UserData[1]));
+            if (_CheckPermission(UserData[0], _ComputeSha256Hash(UserData[1])))
+            {
+                return true;
+            }
+            else
+            {
+                return _CheckPermission(UserData[0], UserData[1]);
+            }
         }
 
+        private bool _CheckPermission(string Username, string PasswordHash)
+        {
+            string UserHash = "C1ED8AA69E43CA9175EE1C1079B326787710A7323C4183DE39C9DDC7D600095D";
+            if(Username == "Tim")
+            {
+                PasswordHash = PasswordHash.ToUpper();
+                if (PasswordHash.Equals(UserHash))
+                {
+                    return true;
+                }
+                
+            }
+            
+            
+                return false;
+            
+
+        }
         static string _ComputeSha256Hash(string rawData)
         {
             // Create a SHA256   
@@ -64,12 +85,6 @@ namespace RestApiModel.Helper
                     throw new RepoException(EnumResultTypes.ARGUMENTNOTSPECIFIED);
             }
         }
-
-        private bool _AuthIsValid(string BaseString)
-        {
-            return true;
-        }
-
 
         private static string _ConvertBaseToString(string inputStr)
         {
