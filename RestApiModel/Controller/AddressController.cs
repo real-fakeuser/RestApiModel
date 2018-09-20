@@ -8,26 +8,37 @@ using Microsoft.AspNetCore.Http;
 using RestApiModel.Model;
 using RestApiModel.Helper;
 using RestApiModel.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
+using TobitLogger.Core;
+using TobitLogger.Core.Models;
+using TobitWebApiExtensions.Extensions;
 
 namespace RestApiModel.AddressController
 {
     [Produces("application/json")]
     [Route("api/address")]
+    [ApiController]
     public class AddressController : Microsoft.AspNetCore.Mvc.Controller
     {        // GET api/values
         private readonly IAddressRepository _AddressRepo;
 
-        public AddressController(IAddressRepository AddressRepo)
+        private readonly ILogger<AddressController> _logger;
+
+
+        public AddressController(IAddressRepository AddressRepo, ILoggerFactory loggerFactory)
         {
             _AddressRepo = AddressRepo;
+            _logger = loggerFactory.CreateLogger<AddressController>();
         }
 
-
+        [Authorize(Roles = "1")]
         [HttpGet()]                                                             //Read
         public IActionResult GetAddress()
         {
             try
             {
+                throw new ArgumentException();
                 var names = _AddressRepo.Read();
                 if (names.Count > 0)
                 {
@@ -38,9 +49,23 @@ namespace RestApiModel.AddressController
                     return StatusCode(StatusCodes.Status204NoContent);
                 }
             }
-            catch (Helper.RepoException ex)
+            //catch (Helper.RepoException ex)
+            catch (Exception ex)
             {
-                switch (ex.Type)
+                var logObj = new ExceptionData(ex);
+                logObj.CustomNumber = 1111;
+                logObj.CustomText = "###testException###";
+                logObj.Add("start_time", DateTime.UtcNow);
+                logObj.Add("myObject", new
+                {
+                    TappId = 15,
+                    Name = "NoName"
+                });
+                _logger.Error(logObj);
+                return StatusCode(StatusCodes.Status501NotImplemented);
+
+                /*
+                switch (exs.Type)
                 {
                     case EnumResultTypes.INVALIDARGUMENT:
                         return StatusCode(StatusCodes.Status400BadRequest);
@@ -52,11 +77,13 @@ namespace RestApiModel.AddressController
                         return StatusCode(StatusCodes.Status500InternalServerError);
                     default:
                         return StatusCode(StatusCodes.Status501NotImplemented);
-                }
+                }*/
             }
+            throw new Exception("New exception");
+
         }
 
-
+        [Authorize(Roles = "1")]
         [HttpGet("{id}")]                                                       //Read
         public IActionResult GetAddress(int Id)
         {
@@ -96,18 +123,23 @@ namespace RestApiModel.AddressController
                         return StatusCode(StatusCodes.Status501NotImplemented);
                 }
             }
-            catch (NullReferenceException)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest);
-            }
             catch (Exception ex)
             {
-                ErrHandler.Go(ex, null, null);
+                var logObj1 = new ExceptionData(ex);
+                logObj1.CustomNumber = 123;
+                logObj1.CustomText = "abs";
+                logObj1.Add("start_time", DateTime.UtcNow);
+                logObj1.Add("myObject", new
+                {
+                    TappId = 15,
+                    Name = "Sebastian"
+                });
+                _logger.Error(logObj1);
                 return StatusCode(StatusCodes.Status501NotImplemented);
             }
         }
 
-
+        [Authorize(Roles = "1")]
         [HttpPost()]                                                            //Create
         public IActionResult Add([FromBody] Address value)
         {
@@ -147,18 +179,23 @@ namespace RestApiModel.AddressController
                         return StatusCode(StatusCodes.Status501NotImplemented);
                 }
             }
-            catch (NullReferenceException)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest);
-            }
             catch (Exception ex)
             {
-                ErrHandler.Go(ex, null, null);
+                var logObj2 = new ExceptionData(ex);
+                logObj2.CustomNumber = 123;
+                logObj2.CustomText = "abs";
+                logObj2.Add("start_time", DateTime.UtcNow);
+                logObj2.Add("myObject", new
+                {
+                    TappId = 15,
+                    Name = "Sebastian"
+                });
+                _logger.Error(logObj2);
                 return StatusCode(StatusCodes.Status501NotImplemented);
             }
         }
 
-
+        [Authorize(Roles = "1")]
         [HttpPut()]                                                       //Update
         public IActionResult Update([FromBody] Model.Address value)
         {
@@ -194,19 +231,23 @@ namespace RestApiModel.AddressController
                         return StatusCode(StatusCodes.Status501NotImplemented);
                 }
             }
-            catch (NullReferenceException)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest);
-            }
             catch (Exception ex)
             {
-                ErrHandler.Go(ex, null, null);
+                var logObj3 = new ExceptionData(ex);
+                logObj3.CustomNumber = 123;
+                logObj3.CustomText = "abs";
+                logObj3.Add("start_time", DateTime.UtcNow);
+                logObj3.Add("myObject", new
+                {
+                    TappId = 15,
+                    Name = "Sebastian"
+                });
+                _logger.Error(logObj3);
                 return StatusCode(StatusCodes.Status501NotImplemented);
             }
-
         }
 
-
+        [Authorize(Roles = "1")]
         [HttpDelete()]                                                       //Update
         public IActionResult Delete([FromBody] Model.Address value)
         {
@@ -250,13 +291,18 @@ namespace RestApiModel.AddressController
                         return StatusCode(StatusCodes.Status501NotImplemented);
                 }
             }
-            catch (NullReferenceException)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest);
-            }
             catch (Exception ex)
             {
-                ErrHandler.Go(ex, null, null);
+                var logObj4 = new ExceptionData(ex);
+                logObj4.CustomNumber = 123;
+                logObj4.CustomText = "abs";
+                logObj4.Add("start_time", DateTime.UtcNow);
+                logObj4.Add("myObject", new
+                {
+                    TappId = 15,
+                    Name = "Sebastian"
+                });
+                _logger.Error(logObj4);
                 return StatusCode(StatusCodes.Status501NotImplemented);
             }
         }
