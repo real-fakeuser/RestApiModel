@@ -12,6 +12,11 @@ using RestApiModel.Interfaces;
 using RestApiModel.Model;
 using RestApiModel.Repository;
 using RestApiModel.Helper;
+using TobitLogger.Core;
+using TobitLogger.Logstash;
+using TobitLogger.Middleware;
+using TobitWebApiExtensions.Extensions;
+
 
 namespace RestApiModel
 {
