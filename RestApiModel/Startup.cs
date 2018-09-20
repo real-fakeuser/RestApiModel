@@ -12,6 +12,11 @@ using RestApiModel.Interfaces;
 using RestApiModel.Model;
 using RestApiModel.Repository;
 using RestApiModel.Helper;
+using TobitLogger.Core;
+using TobitLogger.Logstash;
+using TobitLogger.Middleware;
+using TobitWebApiExtensions.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace RestApiModel
 {
@@ -27,7 +32,10 @@ namespace RestApiModel
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<ILogContextProvider, RequestGuidContextProvider>();
+            services.AddChaynsToken();
+            services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
             services.Configure<DbSettings>(Configuration.GetSection("DbSettings"));
 
             services.AddSingleton<IDbContext, Helper.DbContext>();
@@ -37,22 +45,24 @@ namespace RestApiModel
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ILogContextProvider logContextProvider)
         {
+            loggerFactory.AddLogstashLogger(Configuration.GetSection("Logger"), logContextProvider: logContextProvider);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseMvc();
-            //app.Run(async (context) =>
-            //{
-                //throw new Exception("Example exception");
-            //});
-            /*
-            app.Run(async (context) =>
+            else
             {
-                await context.Response.WriteAsync("Hello World!");
-            });*/
+                app.UseHsts();
+            }
+
+            app.UseRequestLogging();
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
+
+            app.UseMvc();
         }
     }
 }
