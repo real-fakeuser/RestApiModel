@@ -8,11 +8,17 @@ using Microsoft.AspNetCore.Http;
 using RestApiModel.Model;
 using RestApiModel.Helper;
 using RestApiModel.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
+using TobitLogger.Core;
+using TobitLogger.Core.Models;
+using TobitWebApiExtensions.Extensions;
 
 namespace RestApiModel.AddressController
 {
     [Produces("application/json")]
     [Route("api/address")]
+    [ApiController]
     public class AddressController : Microsoft.AspNetCore.Mvc.Controller
     {        // GET api/values
         private readonly IAddressRepository _AddressRepo;
@@ -22,7 +28,7 @@ namespace RestApiModel.AddressController
             _AddressRepo = AddressRepo;
         }
 
-
+        [Authorize(Roles = "1")]
         [HttpGet()]                                                             //Read
         public IActionResult GetAddress()
         {
@@ -56,7 +62,7 @@ namespace RestApiModel.AddressController
             }
         }
 
-
+        [Authorize(Roles = "1")]
         [HttpGet("{id}")]                                                       //Read
         public IActionResult GetAddress(int Id)
         {
@@ -107,7 +113,7 @@ namespace RestApiModel.AddressController
             }
         }
 
-
+        [Authorize(Roles = "1")]
         [HttpPost()]                                                            //Create
         public IActionResult Add([FromBody] Address value)
         {
@@ -158,7 +164,7 @@ namespace RestApiModel.AddressController
             }
         }
 
-
+        [Authorize(Roles = "1")]
         [HttpPut()]                                                       //Update
         public IActionResult Update([FromBody] Model.Address value)
         {
@@ -206,7 +212,7 @@ namespace RestApiModel.AddressController
 
         }
 
-
+        [Authorize(Roles = "1")]
         [HttpDelete()]                                                       //Update
         public IActionResult Delete([FromBody] Model.Address value)
         {
