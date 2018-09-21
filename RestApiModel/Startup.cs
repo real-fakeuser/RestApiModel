@@ -37,6 +37,7 @@ namespace RestApiModel
             services.AddChaynsToken();
             services.AddMvc().SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
             services.Configure<DbSettings>(Configuration.GetSection("DbSettings"));
+            services.Configure<ChaynsApiKey>(Configuration.GetSection("ChaynsBackendApi"));
 
             services.AddSingleton<IDbContext, Helper.DbContext>();
             services.AddScoped<ICompanyRepository, CompanyRepo>();
